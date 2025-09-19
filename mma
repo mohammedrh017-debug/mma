@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Device Info Collector</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+    h1 { color: #333; }
+    pre { background: #fff; padding: 15px; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+  <h1>Device Info Collector</h1>
+  <pre id="output">Collecting info...</pre>
+
+  <script>
+    const output = document.getElementById('output');
+
+    // 1️⃣ Device & Browser Info
+    let deviceInfo = {
+      userAgent: navigator.userAgent,
+      platform: navigator.platform,
+      hardwareConcurrency: navigator.hardwareConcurrency,
+      deviceMemory: navigator.deviceMemory,
+      maxTouchPoints: navigator.maxTouchPoints,
+      language: navigator.language,
+      languages: navigator.languages,
+      doNotTrack: navigator.doNotTrack,
+      cookieEnabled: navigator.cookieEnabled
+    };
+    output.textContent = "📱 Device Info:\n" + JSON.stringify(deviceInfo, null, 2) + "\n\n";
+
+    // 2️⃣ Media Devices
+    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+      navigator.mediaDevices.enumerateDevices().then(devices => {
+        let mediaDevices = devices.map(d => ({
+          kind: d.kind,
+          deviceId: d.deviceId
+        }));
+        output.textContent += "🎥 Media Devices:\n" + JSON.stringify(mediaDevices, null, 2) + "\n\n";
+      }).catch(() => {
+        output.textContent += "🎥 Media Devices: Not accessible\n\n";
+      });
+    }
+
+    // 3️⃣ Network Info
+    if (navigator.connection) {
+      const connection = navigator.connection;
+      let netInfo = {
+        type: connection.effectiveType,
+        downlink: connection.downlink,
+        rtt: connection.rtt,
+        saveData: connection.saveData
+      };
+      output.textContent += "🌐 Network Info:\n" + JSON.stringify(netInfo, null, 2) + "\n\n";
+    }
+
+    // 4️⃣ Battery Info
+    if (navigator.getBattery) {
+      navigator.getBattery().then(battery => {
+        let batteryInfo = {
+          level: battery.level,
+          charging: battery.charging
+        };
+        output.textContent += "🔋 Battery Info:\n" + JSON.stringify(batteryInfo, null, 2) + "\n\n";
+      }).catch(() => {
+        output.textContent += "🔋 Battery Info: Not accessible\n\n";
+      });
+    }
+
+    // 5️⃣ Local Time
+    let now = new Date();
+    output.textContent += "⏳ Local Time:\n" + now.toString() + "\n";
+  </script>
+</body>
+</html>
